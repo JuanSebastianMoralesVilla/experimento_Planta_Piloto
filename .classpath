@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Code/Client/src/main/java/icesi/plantapiloto/experimento/client_manager"/>
+	<classpathentry kind="src" path="Code/Server/src/main/java/icesi/plantapiloto/experimento/server_manager"/>
+	<classpathentry kind="lib" path="Code/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
