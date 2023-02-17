@@ -1,4 +1,4 @@
-package experimento_Planta_Piloto;
+package icesi.plantapiloto.experimento.server_manager;
 
 import java.security.Timestamp;
 
