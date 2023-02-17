@@ -59,13 +59,13 @@ public class SocketServerRunnable extends Thread {
         System.out.println("Tag Solicitado: " + tag);
 
         // Generar un número aleatorio double
-        double value = server.getLastNumber();
+        Tag value = server.getLastNumber();
 
         // Almacena el valor a enviar enviado
-        server.getTagSend().add(null);
+        server.getTagSend().add(value);
         
         // Formatear el valor aleatorio para tener una longitud específica de 100 bytes
-        String formattedValue = String.format("%1$-100s", value);
+        String formattedValue = String.format("%1$-100s", value.getValue());
 
         return formattedValue;
     }

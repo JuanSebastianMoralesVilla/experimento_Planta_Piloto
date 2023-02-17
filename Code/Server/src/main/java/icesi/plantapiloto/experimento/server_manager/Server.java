@@ -8,24 +8,23 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
 import java.util.Random;
 import java.util.Stack;
 
 public class Server {
 
 	private final static String PATH = "data";
-	private final static String TEST = "test";
 	private final static String FILE_TEST = "XHGRID.csv";
 
-	private Stack<Double> stack;
+	private Stack<Tag> stack;
 	private Random randomGenerator;
 	private int seed;
 	private int frequency;
-	private Stack<Double> tagsGenerate;
 	private Stack<Tag>  tagsSend;
 	
 	public Server() {
-		tagsGenerate = new Stack<>();
+		stack = new Stack<>();
 		tagsSend= new Stack<>();
 		this.loadConfig();
 		randomGenerator = new Random(seed);
@@ -58,16 +57,16 @@ public class Server {
 	}
 	
 	public void generateNumber() {
-		double number = randomGenerator.nextDouble();
-		stack.push(number);
+		Integer number = randomGenerator.nextInt(100);
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		Tag tag = new Tag();
+		tag.setValue(number);
+		tag.setTime(timestamp);
+		stack.push(tag);
 	}
 	
-	public Double getLastNumber() {
-		if (!stack.empty()) {
-			return stack.peek();
-		} else {
-			return (double) -1;
-		}
+	public Tag getLastNumber() {
+		return stack.peek();
 	}
 	
 	public Integer getFrequency() {
@@ -88,7 +87,7 @@ public class Server {
 			Tag currentTag = tagsSend.pop();			
 		
 
-			bw.write( currentTag.getName()+ ";" +currentTag.getValue()+ ";"+currentTag.getTimeTag()+"\n");                 	
+			bw.write( currentTag.getName()+ ";" +currentTag.getValue()+ ";"+currentTag.getTime()+"\n");                 	
 			}
 
 		bw.write("________________________________________________________________");

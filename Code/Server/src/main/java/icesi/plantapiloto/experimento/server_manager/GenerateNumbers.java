@@ -1,11 +1,8 @@
 package icesi.plantapiloto.experimento.server_manager;
 
-
-
-
 public class GenerateNumbers implements Runnable{
 	private Server server;
-	private boolean run = true;
+	private boolean stop;
 	
 	public GenerateNumbers(Server server) {
         this.server = server;
@@ -13,7 +10,7 @@ public class GenerateNumbers implements Runnable{
 
 	@Override
 	public void run() {
-		while (!run) {
+		while (!stop) {
 			server.generateNumber();
 			try {
 				Thread.sleep(server.getFrequency());
@@ -22,8 +19,8 @@ public class GenerateNumbers implements Runnable{
 			}
 		}
 	}
-	public void stopGenerationNumbers() {
-		run = false;
+	public void stopGenerationNumbers(boolean b) {
+		this.stop = b;
 	}
 
 }

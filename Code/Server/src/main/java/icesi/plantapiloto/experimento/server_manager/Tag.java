@@ -1,53 +1,30 @@
 package icesi.plantapiloto.experimento.server_manager;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 public class Tag {
-	 String name;
-	Double value;
-	Timestamp timeTag;
 	
+	private String name;
+	private Integer value;
+	private Timestamp time;
 	
-	public Tag (String name, Double value, Timestamp timeTag) {
-		
-		this.name=name;
-		this.value=value;
-		this.timeTag=timeTag;
-		
-		
-	}
-
 	public String getName() {
 		return name;
 	}
-
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
-
-	public Double getValue() {
+	public Integer getValue() {
 		return value;
 	}
-
-
-	public void setValue(Double value) {
+	public void setValue(Integer value) {
 		this.value = value;
 	}
-
-
-	public Timestamp getTimeTag() {
-		return timeTag;
+	public Timestamp getTime() {
+		return time;
 	}
-
-
-	public void setTimeTag(Timestamp timeTag) {
-		this.timeTag = timeTag;
-	}
-	
-	
-	
-	
+	public void setTime(Timestamp time) {
+		this.time = time;
+	}	
 
 }
