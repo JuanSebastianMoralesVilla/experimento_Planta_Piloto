@@ -1,4 +1,4 @@
-package icesi.plantapiloto.experimento.server_manager;
+
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,7 +32,7 @@ public class Server {
 
 	private void loadConfig() {
 		try {
-			File propFile = new File("server.conf");
+			File propFile = new File("src/resources/server.conf");
 
 			InputStream stream = new FileInputStream(propFile);
 			BufferedReader red = new BufferedReader(new InputStreamReader(stream));

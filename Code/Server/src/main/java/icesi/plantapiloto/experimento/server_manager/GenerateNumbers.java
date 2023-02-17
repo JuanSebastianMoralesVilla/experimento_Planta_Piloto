@@ -1,4 +1,4 @@
-package icesi.plantapiloto.experimento.server_manager;
+
 
 public class GenerateNumbers implements Runnable{
 	private Server server;

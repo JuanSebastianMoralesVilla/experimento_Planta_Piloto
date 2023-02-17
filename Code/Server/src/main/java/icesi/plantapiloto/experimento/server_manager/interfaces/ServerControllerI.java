@@ -1,4 +1,5 @@
-package icesi.plantapiloto.experimento.server_manager.interfaces;
+package interfaces;
+
 
 public interface ServerControllerI {
     public void start();
