@@ -32,7 +32,7 @@ public class Server {
 
 	private void loadConfig() {
 		try {
-			File propFile = new File(System.getProperty("user.dir")+"/Code/Server/src/main/resources/server.conf");
+			File propFile = new File("src/resources/server.conf");
 
 			InputStream stream = new FileInputStream(propFile);
 			BufferedReader red = new BufferedReader(new InputStreamReader(stream));
