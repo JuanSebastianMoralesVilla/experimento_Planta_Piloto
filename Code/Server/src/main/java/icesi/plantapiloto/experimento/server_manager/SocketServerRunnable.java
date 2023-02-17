@@ -60,6 +60,9 @@ public class SocketServerRunnable extends Thread {
 
         // Generar un número aleatorio double
         double value = server.getLastNumber();
+
+        // Almacena el valor a enviar enviado
+        server.getTagSend().add(null);
         
         // Formatear el valor aleatorio para tener una longitud específica de 100 bytes
         String formattedValue = String.format("%1$-100s", value);
@@ -69,6 +72,8 @@ public class SocketServerRunnable extends Thread {
 
     private void sendResponse(Socket socket, String response) throws IOException {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+
+        
         // Enviar el dato aleatorio al cliente
         out.println(response);
     }   

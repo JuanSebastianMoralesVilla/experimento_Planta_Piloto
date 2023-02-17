@@ -3,24 +3,34 @@ package icesi.plantapiloto.experimento.server_manager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Random;
 import java.util.Stack;
 
 public class Server {
-	
+
+	private final static String PATH = "data";
+	private final static String TEST = "test";
+	private final static String FILE_TEST = "XHGRID.csv";
+
 	private Stack<Double> stack;
 	private Random randomGenerator;
 	private int seed;
 	private int frequency;
+	private Stack<Double> tagsGenerate;
+	private Stack<Tag>  tagsSend;
 	
 	public Server() {
-		stack = new Stack<>();
+		tagsGenerate = new Stack<>();
+		tagsSend= new Stack<>();
 		this.loadConfig();
 		randomGenerator = new Random(seed);
 	}
-	
+
 	private void loadConfig() {
 		try {
 			File propFile = new File("server.conf");
@@ -37,7 +47,7 @@ public class Server {
 
 				}else {
 					String frequencyString = prop[1];
-					this.frequency=Integer.parseInt(frequencyString);;
+					this.frequency=Integer.parseInt(frequencyString);
 				}
 				line = red.readLine();
 			}
@@ -64,4 +74,28 @@ public class Server {
 		return this.frequency;
 	}
 
+	public void printcsv()throws IOException{
+
+		File file= new File(PATH+"/"+FILE_TEST);
+        FileWriter fw= new FileWriter(file);
+        BufferedWriter bw= new BufferedWriter(fw);
+		
+		bw.write("TAG;VALUE;DATE\n");
+
+		for(int i= 0; i<tagsSend.size();i++){
+
+
+			Tag currentTag = tagsSend.pop();			
+		
+
+			bw.write( currentTag.getName()+ ";" +currentTag.getValue()+ ";"+currentTag.getTimeTag()+"\n");                 	
+			}
+
+		bw.write("________________________________________________________________");
+		bw.close();
+    }
+
+	public Stack<Tag> getTagSend(){
+		return tagsSend;
+	}
 }
