@@ -15,6 +15,7 @@ public class SocketServerRunnable extends Thread {
     private Server server;
     private boolean runing;
     private ServerSocket listener;
+    private int port;
 
     public SocketServerRunnable(Server server){
         this.server = server;
@@ -32,19 +33,20 @@ public class SocketServerRunnable extends Thread {
 
     private void loadConfig() {
 		try {
-			File propFile = new File("resources/server.conf");
+			File propFile = new File(System.getProperty("user.dir")+"/Code/Server/src/main/resources/server.conf");
 
+            System.out.println("PATH: "+propFile.getAbsoluteFile());
 			InputStream stream = new FileInputStream(propFile);
 			BufferedReader red = new BufferedReader(new InputStreamReader(stream));
 
 			String line = red.readLine();
 			while (line != null && !line.equals("")) {
 				String prop[] = line.trim().split("=");
-				if (prop[0].contains("port")) {
+				if (prop[0].contains("PORT")) {
 					String portString = prop[1];
-					int port=Integer.parseInt(portString);;
-                    listener  = new ServerSocket(port);
+					this.port = Integer.parseInt(portString);
 				}
+                line = red.readLine();
 			}
 			red.close();
 		} catch (Exception e) {
@@ -86,11 +88,13 @@ public class SocketServerRunnable extends Thread {
 
     @Override
     public void run() {
-        // Escuchar en el puerto especificado
+        
         try {
+            listener  = new ServerSocket(port);
             while (runing) {
                 Socket socket = null;
                 try {
+                    System.out.println("Esperando");
                      // Aceptar una conexión entrante
                     socket = listener.accept();
 
