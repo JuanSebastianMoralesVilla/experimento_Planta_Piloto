@@ -13,13 +13,13 @@ import java.net.Socket;
 public class SocketServerRunnable extends Thread {
 
     private Server server;
-    private boolean run;
+    private boolean runing;
     private ServerSocket listener;
 
     public SocketServerRunnable(Server server){
         this.server = server;
         loadConfig();
-        run = false;
+        runing = false;
     }
 
     public void initialize(){
@@ -75,7 +75,7 @@ public class SocketServerRunnable extends Thread {
 
     @Override
     public void start(){
-        this.run = true;
+        this.runing = true;
         super.start();
     }
 
@@ -83,7 +83,7 @@ public class SocketServerRunnable extends Thread {
     public void run() {
         // Escuchar en el puerto especificado
         try {
-            while (run) {
+            while (runing) {
                 Socket socket = null;
                 try {
                      // Aceptar una conexión entrante
@@ -110,6 +110,11 @@ public class SocketServerRunnable extends Thread {
                 System.out.println("No se ha podido cerrar la conexión");
             }
         }
+    }
+
+   
+    public void stopProcess(){
+        this.runing = false;
     }
     
 }
