@@ -89,8 +89,6 @@ public class Server {
 
 			bw.write( currentTag.getName()+ ";" +currentTag.getValue()+ ";"+currentTag.getTime()+"\n");                 	
 			}
-
-		bw.write("________________________________________________________________");
 		bw.close();
     }
 

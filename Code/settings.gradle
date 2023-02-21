@@ -12,3 +12,5 @@ include ':Client'
 project(':Client').projectDir = new File("Client")
 include ':Server'
 project(':Server').projectDir = new File("Server")
+include ':common'
+project(':common').projectDir = new File("common")
