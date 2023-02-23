@@ -14,3 +14,7 @@ include ':Server'
 project(':Server').projectDir = new File("Server")
 include ':common'
 project(':common').projectDir = new File("common")
+include ':serverPlugin'
+project(':serverPlugin').projectDir = new File("serverPlugin")
+// include ':MQTT'
+// project(':MQTT').projectDir = new File("MQTT")

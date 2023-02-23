@@ -1,6 +1,6 @@
 package icesi.plantapiloto.experimento.server_manager;
 
-public class GenerateNumbers implements Runnable{
+public class GenerateNumbers extends Thread{
 	private Server server;
 	private boolean stop;
 	
@@ -19,8 +19,8 @@ public class GenerateNumbers implements Runnable{
 			}
 		}
 	}
-	public void stopGenerationNumbers(boolean b) {
-		this.stop = b;
+	public void stopGenerationNumbers() {
+		this.stop = true;
 	}
 
 }

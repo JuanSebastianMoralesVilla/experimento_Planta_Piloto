@@ -11,44 +11,46 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import icesi.plantapiloto.experimento.common.PluginI;
-import icesi.plantapiloto.experimento.common.encoders.ObjectEncoder;
-import icesi.plantapiloto.experimento.common.events.PublisherI;
+// import icesi.plantapiloto.experimento.common.encoders.ObjectEncoder;
+// import icesi.plantapiloto.experimento.common.events.PublisherI;
 
 public class ScheduleManager {
-    private PublisherI publisherI;
+    // private PublisherI publisherI;
     private Properties properties;
     private Scheduler scheduler;
     private File propFile;
 
     public ScheduleManager() throws Exception {
         properties = new Properties();
-        propFile = new File("schedule.properties");
+        propFile = new File(System.getProperty("user.dir") + "/Code/Client/src/main/resources/schedule.properties");
         if (!propFile.exists()) {
             propFile.createNewFile();
         }
         InputStream stream = new FileInputStream(propFile);
         properties.load(stream);
 
-        String pubClass = properties.getProperty("publisher.class").trim();
-        String pubIp = properties.getProperty("publisher.ip").trim();
-        String pubEncoder = properties.getProperty("publisher.encoder").trim();
-        String pubName = properties.getProperty("publisher.name").trim();
+        // String pubClass = properties.getProperty("publisher.class").trim();
+        // String pubIp = properties.getProperty("publisher.ip").trim();
+        // String pubEncoder = properties.getProperty("publisher.encoder").trim();
+        // String pubName = properties.getProperty("publisher.name").trim();
 
-        if (pubClass == null || pubIp == null || pubEncoder == null || pubName == null) {
-            System.out.println("No publisher config");
-            return;
-        }
-        ObjectEncoder encoder = (ObjectEncoder) Class.forName(pubEncoder).getDeclaredConstructor()
-                .newInstance();
-        publisherI = (PublisherI) Class.forName(pubClass).getDeclaredConstructor().newInstance();
+        // if (pubClass == null || pubIp == null || pubEncoder == null || pubName == null) {
+        //     System.out.println("No publisher config");
+        //     return;
+        // }
+        // ObjectEncoder encoder = (ObjectEncoder) Class.forName(pubEncoder).getDeclaredConstructor()
+        //         .newInstance();
+        // publisherI = (PublisherI) Class.forName(pubClass).getDeclaredConstructor().newInstance();
 
-        publisherI.setEncoder(encoder);
-        publisherI.setHost(pubIp);
-        publisherI.setName(pubName);
+        // publisherI.setEncoder(encoder);
+        // publisherI.setHost(pubIp);
+        // publisherI.setName(pubName);
 
-        scheduler = new Scheduler(publisherI);
-
+        // scheduler = new Scheduler(publisherI);
+        scheduler = new Scheduler(null);
+        
         Iterator<?> keys = properties.keySet().iterator();
+
         while (keys.hasNext()) {
             String key = (String) keys.next();
             if (key.endsWith(".plugin")) {
@@ -67,12 +69,12 @@ public class ScheduleManager {
                 manager.loadPlugin(plu[0], plu[1], true);
             }
         }
-
     }
 
     public void loadPlugin(String key, String path, boolean save) throws Exception {
 
         path = path.trim();
+
         key = key.trim();
         PluginI pluginI = (PluginI) Class.forName(path).getDeclaredConstructor()
                 .newInstance();
@@ -83,7 +85,6 @@ public class ScheduleManager {
             wr.newLine();
             wr.flush();
             wr.close();
-
         }
     }
 }

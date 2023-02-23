@@ -10,22 +10,22 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Scheduler {
-    private PublisherI publisher;
+    // private PublisherI publisher;
     private PublisherManager publusherManager;
     private List<TimerTask> plugins;
     private Timer timer;
 
     public Scheduler(PublisherI publisher) {
-        this.publisher = publisher;
+        // this.publisher = publisher;
         this.plugins = new ArrayList<>();
         this.timer = new Timer();
-        this.publusherManager = new PublisherManager(this.publisher);
-        this.publusherManager.start();
+        // this.publusherManager = new PublisherManager(this.publisher);
+        // this.publusherManager.start();
     }
 
     public void addPlugin(PluginI pugI) {
         String startHour = pugI.getSettings().get("startHour");
-        long lapse = Long.parseLong(pugI.getSettings().get("lapse"));
+        long lapse = Long.parseLong(pugI.getSettings().get("LAPSE"));
         if (startHour == null) {
             Task task = new Task(pugI, publusherManager);
             timer.schedule(task, 0, lapse);

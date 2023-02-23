@@ -5,13 +5,12 @@ repositories {
 }
 
 dependencies {
-    implementation project(":serverPlugin")
     implementation project(":common")
     implementation fileTree(dir:'.', include:'*.jar')
 }
 jar{
     manifest{
-        attributes 'Main-Class': "icesi.plantapiloto.experimento.client_manager",
+        attributes 'Main-Class': "icesi.plantapiloto.experimento.plugin",
                     'Class-Path': configurations.runtimeClasspath.resolve().collect { it.toURI() }.join(' ')
     }
 }
