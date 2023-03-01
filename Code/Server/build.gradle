@@ -5,6 +5,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(":common")
     implementation fileTree(dir:'.', include:'*.jar')
 }
 jar{

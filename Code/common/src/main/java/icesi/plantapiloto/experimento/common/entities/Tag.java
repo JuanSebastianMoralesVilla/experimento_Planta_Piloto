@@ -1,4 +1,4 @@
-package icesi.plantapiloto.experimento.server_manager;
+package icesi.plantapiloto.experimento.common.entities;
 
 import java.sql.Timestamp;
 

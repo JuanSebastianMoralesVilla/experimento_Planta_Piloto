@@ -18,8 +18,7 @@ public class Task extends TimerTask {
     @Override
     public void run() {
         long time = System.currentTimeMillis();
-       Message  messages = plugin.getMessage();
-      ScheduleManager manager= new ScheduleManager();
+        Message  messages = plugin.getMessage();
  
         // publisher.addMessage(messages);
         System.out.println("tiempo de la tarea: " + (System.currentTimeMillis() - time) + " ms");

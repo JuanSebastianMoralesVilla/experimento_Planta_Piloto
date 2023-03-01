@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Stack;
 
+import icesi.plantapiloto.experimento.common.PluginI;
 import icesi.plantapiloto.experimento.common.entities.Message;
+import icesi.plantapiloto.experimento.common.entities.Tag;
 
 // import icesi.plantapiloto.experimento.common.encoders.ObjectEncoder;
 // import icesi.plantapiloto.experimento.common.events.PublisherI;
@@ -27,7 +29,7 @@ public class ScheduleManager {
     private Scheduler scheduler;
     private File propFile;
 
-    private list<Message> messages;
+    private List<Tag> tags;
 
     public ScheduleManager() throws Exception {
         properties = new Properties();
@@ -106,22 +108,15 @@ public class ScheduleManager {
     		
     		bw.write("TAG;VALUE;DATE\n");
 
-    		for(int i= 0; i<messages.size();i++){
-
-
-    			Message currentMessage = messages.add();			
-    		
-
-    			bw.write( currentMessage.getName()+ ";" +currentMessage.getValue()+ ";"+currentMessage.getTime()+"\n");                 	
-    			}
-
-                addMessage();
+    		for(int i= 0; i<tags.size();i++){
+                Tag currentTag = tags.get(i);
+    			bw.write( currentTag.getName()+ ";" +currentTag.getValue()+ ";"+currentTag.getTime()+"\n");                 	
+    		}
     		bw.close();
         }
         
-        public List<Message> addMessage(){
-    		Mesagge mymessage= new Message();
-            mymessage.add();
+        public void addTag(Tag tag){
+            tags.add(tag);
     	}
 
     
