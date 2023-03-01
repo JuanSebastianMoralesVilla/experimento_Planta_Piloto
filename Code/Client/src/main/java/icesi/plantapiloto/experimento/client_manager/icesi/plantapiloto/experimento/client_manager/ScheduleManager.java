@@ -5,20 +5,29 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
+import java.util.Stack;
 
-import icesi.plantapiloto.experimento.common.PluginI;
+import icesi.plantapiloto.experimento.common.entities.Message;
+
 // import icesi.plantapiloto.experimento.common.encoders.ObjectEncoder;
 // import icesi.plantapiloto.experimento.common.events.PublisherI;
 
 public class ScheduleManager {
     // private PublisherI publisherI;
+
+    private final static String PATH = "data";
+	private final static String FILE_TEST = "XHGRIDClient.csv";
     private Properties properties;
     private Scheduler scheduler;
     private File propFile;
+
+    private list<Message> messages;
 
     public ScheduleManager() throws Exception {
         properties = new Properties();
@@ -87,4 +96,33 @@ public class ScheduleManager {
             wr.close();
         }
     }
+        
+        
+    public void printcsvClient () throws IOException{
+
+    		File file= new File(PATH+"/"+FILE_TEST);
+            FileWriter fw= new FileWriter(file);
+            BufferedWriter bw= new BufferedWriter(fw);
+    		
+    		bw.write("TAG;VALUE;DATE\n");
+
+    		for(int i= 0; i<messages.size();i++){
+
+
+    			Message currentMessage = messages.add();			
+    		
+
+    			bw.write( currentMessage.getName()+ ";" +currentMessage.getValue()+ ";"+currentMessage.getTime()+"\n");                 	
+    			}
+
+                addMessage();
+    		bw.close();
+        }
+        
+        public List<Message> addMessage(){
+    		Mesagge mymessage= new Message();
+            mymessage.add();
+    	}
+
+    
 }
