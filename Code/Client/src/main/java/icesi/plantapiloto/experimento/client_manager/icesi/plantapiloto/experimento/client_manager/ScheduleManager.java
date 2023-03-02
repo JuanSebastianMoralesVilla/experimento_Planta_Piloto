@@ -74,6 +74,14 @@ public class ScheduleManager {
         ScheduleManager manager = new ScheduleManager();
         BufferedReader rd = new BufferedReader(new InputStreamReader(System.in));
         String line = rd.readLine();
+        
+        
+        System.out.print("-------------Experiment-------------");
+        System.out.print("\n Option menu:"
+        		+ "\n AddPlugin"
+        		+ "\n exit "
+        		);
+        
         while (!line.equals("exit")) {
             if (line.startsWith("addPlugin")) {
                 String[] plu = line.split("=");
