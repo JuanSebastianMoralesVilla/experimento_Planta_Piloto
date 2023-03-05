@@ -31,9 +31,18 @@ public class Server {
 		randomGenerator = new Random(seed);
 	}
 
+	public static void main(String[] args) throws IOException{
+		Server server = new Server();
+        SocketServerRunnable runnableServer = new SocketServerRunnable(server);
+        GenerateNumbers generateNumbers = new GenerateNumbers(server);
+        generateNumbers.start();
+        runnableServer.start();
+	}
+
 	private void loadConfig() {
 		try {
-			File propFile = new File(System.getProperty("user.dir") + "/Code/Server/src/main/resources/server.conf");
+			// File propFile = new File(System.getProperty("user.dir") + "/Code/Server/src/main/resources/server.properties");
+			File propFile = new File("resources/server.properties");
 
 			InputStream stream = new FileInputStream(propFile);
 			BufferedReader red = new BufferedReader(new InputStreamReader(stream));
@@ -45,7 +54,7 @@ public class Server {
 					String seedString = prop[1];
 					this.seed=Integer.parseInt(seedString);;
 
-				}else {
+				}else if (prop[0].contains("FREQUENCY")){
 					String frequencyString = prop[1];
 					this.frequency=Integer.parseInt(frequencyString);
 				}

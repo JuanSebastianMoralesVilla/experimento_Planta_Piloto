@@ -24,26 +24,19 @@ public class Scheduler {
     }
 
     public void addPlugin(PluginI pugI) {
-        String startHour = pugI.getSettings().get("startHour");
-        long lapse = Long.parseLong(pugI.getSettings().get("LAPSE"));
-        if (startHour == null) {
-            Task task = new Task(pugI, publusherManager);
-            timer.schedule(task, 0, lapse);
-            plugins.add(task);
-            return;
-        }
-        String[] startTime = startHour.split(":");
-        Calendar calendar = Calendar.getInstance();
-        int hour = Integer.parseInt(startTime[0]);
-        int minute = Integer.parseInt(startTime[1]);
-
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
         Task task = new Task(pugI, publusherManager);
-        timer.schedule(task, calendar.getTime(), lapse);
         plugins.add(task);
+    }
+
+    public void runTasks(long lapse, long duration){
+        for(TimerTask task : plugins){
+            timer.schedule(task, 0, lapse);
+        }
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run(){
+                timer.cancel();
+            }
+        }, duration);
     }
 }
