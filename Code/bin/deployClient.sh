@@ -6,7 +6,6 @@ copy_files(){
     cp serverPlugin/build/libs/serverPlugin.jar jars/client
     cp Client/build/libs/Client.jar jars/client
 
-    cp serverPlugin/src/main/resources/* jars/client/resources
     cp Client/src/main/resources/* jars/client/resources
 
     cp common/build/libs/common.jar jars/client
@@ -18,6 +17,7 @@ run_app(){
     java -cp "./*" icesi.plantapiloto.experimento.client_manager.ScheduleManager
 }
 
+java -version
 if [ "$1" = "build" ]
 then
     echo "building..."

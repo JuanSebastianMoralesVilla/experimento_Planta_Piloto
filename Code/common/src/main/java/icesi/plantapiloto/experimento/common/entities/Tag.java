@@ -7,6 +7,7 @@ public class Tag {
 	private String name;
 	private Integer value;
 	private Timestamp time;
+	private String dataSource;
 	
 	public String getName() {
 		return name;
@@ -26,5 +27,10 @@ public class Tag {
 	public void setTime(Timestamp time) {
 		this.time = time;
 	}	
-
+	public String getDataSource() {
+		return dataSource;
+	}
+	public void setDataSource(String dataSource) {
+		this.dataSource = dataSource;
+	}
 }

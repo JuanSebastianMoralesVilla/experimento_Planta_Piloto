@@ -16,6 +16,7 @@ run_app(){
     java -cp "./*" icesi.plantapiloto.experimento.server_manager.Server
 }
 
+java -version
 if [ "$1" = "build" ]
 then
     echo "building..."

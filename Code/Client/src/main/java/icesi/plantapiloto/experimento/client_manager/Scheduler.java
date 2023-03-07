@@ -1,7 +1,6 @@
 package icesi.plantapiloto.experimento.client_manager;
 
 import icesi.plantapiloto.experimento.common.PluginI;
-import icesi.plantapiloto.experimento.common.events.PublisherI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,15 +12,13 @@ import java.util.concurrent.TimeUnit;
 
 public class Scheduler {
     // private PublisherI publisher;
-    private PublisherManager publusherManager;
+    private MessageManager messageManager;
     private ScheduleManager manager;
     private List<PluginI> plugins;
-    private Timer timer;
 
-    public Scheduler(PublisherI publisher, ScheduleManager manager) {
-        // this.publisher = publisher;
+    public Scheduler(MessageManager messageManager, ScheduleManager manager) {
+        this.messageManager = messageManager;
         this.plugins = new ArrayList<>();
-        this.timer = new Timer();
         this.manager = manager;
         // this.publusherManager = new PublisherManager(this.publisher);
         // this.publusherManager.start();
@@ -34,7 +31,7 @@ public class Scheduler {
     public void runTasks(long lapse, long duration,int server_ammount,String testId){
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(plugins.size()*5);
         for(int i = 0;i<plugins.size()&&i<server_ammount;i++){
-            Task task = new Task(plugins.get(i), publusherManager);
+            Task task = new Task(plugins.get(i), messageManager);
             executorService.scheduleWithFixedDelay(task,0,lapse,TimeUnit.MILLISECONDS);
         }
         
