@@ -4,7 +4,6 @@ import icesi.plantapiloto.experimento.common.PluginI;
 import icesi.plantapiloto.experimento.common.events.PublisherI;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -12,31 +11,44 @@ import java.util.TimerTask;
 public class Scheduler {
     // private PublisherI publisher;
     private PublisherManager publusherManager;
-    private List<TimerTask> plugins;
+    private ScheduleManager manager;
+    private List<PluginI> plugins;
     private Timer timer;
 
-    public Scheduler(PublisherI publisher) {
+    public Scheduler(PublisherI publisher, ScheduleManager manager) {
         // this.publisher = publisher;
         this.plugins = new ArrayList<>();
         this.timer = new Timer();
+        this.manager = manager;
         // this.publusherManager = new PublisherManager(this.publisher);
         // this.publusherManager.start();
     }
 
     public void addPlugin(PluginI pugI) {
-        Task task = new Task(pugI, publusherManager);
-        plugins.add(task);
+        plugins.add(pugI);
     }
 
-    public void runTasks(long lapse, long duration){
-        for(TimerTask task : plugins){
+    public void runTasks(long lapse, long duration,int server_ammount,String testId){
+        this.timer = new Timer();
+        for(int i = 0;i<plugins.size()&&i<server_ammount;i++){
+            Task task = new Task(plugins.get(i), publusherManager);
             timer.schedule(task, 0, lapse);
         }
-        timer.schedule(new TimerTask() {
+        
+        TimerTask cancelTask = new TimerTask() {
             @Override
             public void run(){
                 timer.cancel();
+                try {
+                    manager.runNextExperiment();
+                } catch (Exception e) {
+                    System.out.println("Somthing was wrong");
+                    e.printStackTrace();
+                }
             }
-        }, duration);
+        };
+
+        Timer cancelTimer = new Timer();
+        cancelTimer.schedule(cancelTask, duration*1000);
     }
 }
