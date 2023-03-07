@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.net.SocketTimeoutException;
 
 import java.net.Socket;
 
@@ -81,23 +82,32 @@ public class ServerPlugin implements PluginI {
             }
             
             long timeToStop = size<=50 ? 5000 : 5000 + 100*(size-50);
-            // Si el proceso no recibe respuesta despues de 5 segundos, termina la tarea
-            timer.schedule(new Stopper(this), timeToStop);
+            // Si el proceso no recibe respuesta despues de 5 segundos, continúa con la siguiente iteración
+            timer.schedule(new TimerTask() {
+            @Override
+                public void run() {
+                    stop();
+                }
+            }, timeToStop);
 
-            for (int i = 0; i < size && running; i++) {
-                String tag = "TAG_#" + i;
-                tags.add(tag);
+        for (int i = 0; i < size && running; i++) {
+            String tag = "TAG_#" + i;
+            tags.add(tag);
+            try {
                 String value = reader.readLine();
                 System.out.println("Respuesta: " + value);
                 Measure measure = new Measure();
                 measure.setName(tag);
                 measure.setValue(value);
                 msg.addMeasure(measure);
+            } catch (SocketTimeoutException e) {
+                System.out.println("No se recibió respuesta para la etiqueta " + tag + " después de 5 segundos");
+                continue;
             }
+        }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         timer.cancel();
         this.running = false;
         return msg;

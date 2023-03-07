@@ -180,16 +180,26 @@ public class ScheduleManager {
         FileWriter fw= new FileWriter(file);
         BufferedWriter bw= new BufferedWriter(fw);
         
-        bw.write("TAG;VALUE;DATE\n");
+        bw.write("EXPERIMENT;TAG;VALUE;TIME;QUANTITY SERVERS;TAG AMMOUNT;LAPSE;REQUESTS PER LAPSE;\n");
+
 
         for(int i= 0; i<tags.size();i++){
             Tag currentTag = tags.get(i);
-            bw.write( currentTag.getName()+ ";" +currentTag.getValue()+ ";"+currentTag.getTime()+"\n");                 	
+            bw.write( numberExperiment+ ";" +currentTag.getName()+ ";" +currentTag.getValue()+ ";"+
+            currentTag.getTime()+quantityServers+ ";" +"\n");                 	
         }
         bw.close();
     }
         
-    public void addTag(Tag tag){
-        tags.add(tag);
+    public void addTag(Message message){
+        Tag tag=new Tag();
+        String nameServer="";
+        for (Measure measure : message.getMeasures()) {
+            tag.setName(measure.getName());
+            tag.setValue(measure.getValue());
+            nameServer = message.getDataSource().split()[0]
+            tag.setDataSource(nameServer)
+            this.tags.add(tag);
+        }
     }
 }
