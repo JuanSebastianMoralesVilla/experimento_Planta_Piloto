@@ -28,7 +28,7 @@ public class Task extends TimerTask {
         Thread thread = new Thread(addMessageRunnable);
         thread.start();
         // publisher.addMessage(messages);
-        System.out.println("tiempo de la tarea: " + (System.currentTimeMillis() - time) + " ms");
+        // System.out.println("tiempo de la tarea: " + (System.currentTimeMillis() - time) + " ms");
     }
 
 }
