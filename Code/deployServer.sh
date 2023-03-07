@@ -3,6 +3,14 @@
 copy_files(){
     mkdir -p jars/server/resources
 
+    cp serverPlugin/build/libs/serverPlugin.jar jars/client
+    cp Client/build/libs/Client.jar jars/client
+
+    cp Client/src/main/resources/* jars/client/resources
+    ###########################################################
+    cp common/build/libs/common.jar jars/client
+    cp common/build/libs/controlLayerCommon.jar jars/client
+    ###########################################################
     cp Server/build/libs/Server.jar jars/server
 
     cp Server/src/main/resources/* jars/server/resources

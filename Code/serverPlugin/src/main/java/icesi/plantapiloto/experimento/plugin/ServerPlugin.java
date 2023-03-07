@@ -1,19 +1,16 @@
 package icesi.plantapiloto.experimento.plugin;
 
 import icesi.plantapiloto.experimento.common.PluginI;
+import icesi.plantapiloto.experimento.common.encoders.JsonEncoder;
 import icesi.plantapiloto.experimento.common.entities.Measure;
 import icesi.plantapiloto.experimento.common.entities.Message;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
-import java.io.File;
 import java.io.OutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,21 +26,21 @@ public class ServerPlugin implements PluginI {
     private String name;
     private int tag_ammount;
     private List<String> tags;
-    private Properties props;
 
     private Socket socket;
     private PrintWriter writer;
     private BufferedReader reader;
+    private JsonEncoder encoder;
 
     private boolean running;
 
     public ServerPlugin(String name,String ip, int port, int tag_ammount) throws Exception {
         tags = new ArrayList<>();
-        props = new Properties();
-
+        encoder = new JsonEncoder();
         this.name = name;
         this.ip = ip;
         this.port = port;
+        this.tag_ammount = tag_ammount;
     }
 
     @Override
@@ -53,27 +50,23 @@ public class ServerPlugin implements PluginI {
         try {
             this.running = true;
             msg.setSourceData(name + " " + ip + ":" + port).setTime(Calendar.getInstance().getTime());
-
-            // int size = Integer.parseInt(props.getProperty("TAG_AMMOUNT"));
-            int size = 5;
-
-            for (int i = 0; i < size; i++) {
+            
+            for (int i = 0; i < tag_ammount; i++) {
                 String tag = "TAG_#" + i;
                 tag = String.format("%1$" + 100 + "s", tag);
                 writer.println(tag);
             }
             
-            long timeToStop = size<=50 ? 5000 : 5000 + 100*(size-50);
+            long timeToStop = tag_ammount<=50 ? 5000 : 5000 + 100*(tag_ammount-50);
             // Si el proceso no recibe respuesta despues de 5 segundos, termina la tarea / agrega 100ms por cada cantidad adicional superior a 50
             timer.schedule(new Stopper(this), timeToStop);
 
-            for (int i = 0; i < size && running; i++) {
+            for (int i = 0; i < tag_ammount && running; i++) {
                 String tag = "TAG_#" + i;
                 tags.add(tag);
                 String value = reader.readLine();
-                Measure measure = new Measure();
-                measure.setName(tag);
-                measure.setValue(value);
+
+                Measure measure = encoder.decode(value, Measure.class);
                 msg.addMeasure(measure);
             }
         } catch (Exception e) {
@@ -113,7 +106,11 @@ public class ServerPlugin implements PluginI {
 
     @Override
     public void disconnet() throws IOException {
-       socket.close();
+        System.out.println("Desconectando server: "+port);
+        writer.println("close");
+        reader.close();
+        writer.close();
+        socket.close();
     }
 
     // @Override

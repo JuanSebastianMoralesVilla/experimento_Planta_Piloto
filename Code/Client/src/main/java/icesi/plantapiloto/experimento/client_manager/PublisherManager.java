@@ -47,7 +47,6 @@ public class PublisherManager extends Thread {
                     } else {
                         Thread.yield();
                     }
-
                 }
 
             } catch (Exception e) {

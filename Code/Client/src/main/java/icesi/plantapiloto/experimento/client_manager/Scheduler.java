@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Scheduler {
     // private PublisherI publisher;
@@ -29,16 +32,16 @@ public class Scheduler {
     }
 
     public void runTasks(long lapse, long duration,int server_ammount,String testId){
-        this.timer = new Timer();
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(plugins.size()*5);
         for(int i = 0;i<plugins.size()&&i<server_ammount;i++){
             Task task = new Task(plugins.get(i), publusherManager);
-            timer.schedule(task, 0, lapse);
+            executorService.scheduleWithFixedDelay(task,0,lapse,TimeUnit.MILLISECONDS);
         }
         
         TimerTask cancelTask = new TimerTask() {
             @Override
             public void run(){
-                timer.cancel();
+                executorService.shutdown();
                 try {
                     manager.runNextExperiment();
                 } catch (Exception e) {
@@ -50,5 +53,9 @@ public class Scheduler {
 
         Timer cancelTimer = new Timer();
         cancelTimer.schedule(cancelTask, duration*1000);
+    }
+
+    public void clearPluings(){
+        plugins = new ArrayList<>();
     }
 }

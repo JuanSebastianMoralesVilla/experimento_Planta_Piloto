@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Properties;
@@ -52,7 +51,6 @@ public class ScheduleManager {
         propFile = new File("resources/schedule.properties");
         InputStream stream = new FileInputStream(propFile);
         properties.load(stream);
-
         // Load List of Plugins
         pluginList = new Properties();
         // propFile = new File(System.getProperty("user.dir") +
@@ -134,7 +132,6 @@ public class ScheduleManager {
         scheduler = new Scheduler(null,this);
 
     }
-
     public static void main(String[] args) throws Exception {
         ScheduleManager manager = new ScheduleManager();
         BufferedReader rd = new BufferedReader(new InputStreamReader(System.in));
@@ -144,8 +141,10 @@ public class ScheduleManager {
                 showMenu();
             }
             line = rd.readLine();
-            executeMenu(manager, line);
-        }while (!line.equals("0") && manager.isRunning() );
+            if(!manager.isRunning()){
+                executeMenu(manager, line);
+            }
+        }while (manager.isRunning() );
         System.out.println("SALIO xd");
     }
 
@@ -199,6 +198,7 @@ public class ScheduleManager {
         PluginI pluginI = (PluginI) Class.forName(path).getConstructor(String.class,String.class,int.class, int.class).newInstance(key, ip, port, tag_ammount);
         scheduler.addPlugin(pluginI);
         pluginI.connect();
+        pluginIs.add(pluginI);
         if (save) {
             BufferedWriter wr = new BufferedWriter(new FileWriter(propFile, true));
             wr.append(key + " = " + path);
@@ -245,7 +245,7 @@ public class ScheduleManager {
         if(experiments.isEmpty()){
             System.out.println("Finished");
             this.running = false;
-            clearPluings();
+            desconectPluings();
             return;
         }
         
@@ -258,6 +258,7 @@ public class ScheduleManager {
                 "\nTAGS AMMOUNT: "+exp.tag_ammount+
                 "\nLAPSE: "+exp.lapse+
                 "\nSERVER AMMOUNT: "+exp.server_ammount);
+                
         clearPluings();
         loadPlugins(exp);
         
@@ -270,10 +271,14 @@ public class ScheduleManager {
         exp.repeats--;
     }
 
-    public void clearPluings() throws IOException{
+    public void desconectPluings() throws IOException{
         while(!pluginIs.isEmpty()){
             pluginIs.poll().disconnet();
         }
+    }
+
+    public void clearPluings(){
+        pluginIs = new LinkedList<>();
     }
 
     public boolean isRunning() {
