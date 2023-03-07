@@ -10,13 +10,13 @@ import java.util.TimerTask;
 
 public class Scheduler {
     // private PublisherI publisher;
-    private PublisherManager publusherManager;
+    private MessageManager messageManager;
     private ScheduleManager manager;
     private List<PluginI> plugins;
     private Timer timer;
 
-    public Scheduler(PublisherI publisher, ScheduleManager manager) {
-        // this.publisher = publisher;
+    public Scheduler(MessageManager messageManager, ScheduleManager manager) {
+        this.messageManager = messageManager;
         this.plugins = new ArrayList<>();
         this.timer = new Timer();
         this.manager = manager;
@@ -31,7 +31,7 @@ public class Scheduler {
     public void runTasks(long lapse, long duration,int server_ammount,String testId){
         this.timer = new Timer();
         for(int i = 0;i<plugins.size()&&i<server_ammount;i++){
-            Task task = new Task(plugins.get(i), publusherManager);
+            Task task = new Task(plugins.get(i), messageManager);
             timer.schedule(task, 0, lapse);
         }
         

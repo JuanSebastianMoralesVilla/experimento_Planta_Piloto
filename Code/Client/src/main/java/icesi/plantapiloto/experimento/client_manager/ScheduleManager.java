@@ -16,7 +16,9 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.ArrayList;
 import java.util.List;
-
+import icesi.plantapiloto.experimento.common.entities.Message;
+import icesi.plantapiloto.experimento.common.entities.Measure;
+import icesi.plantapiloto.experimento.common.entities.Tag;
 import icesi.plantapiloto.experimento.common.PluginI;
 
 // import icesi.plantapiloto.experimento.common.encoders.ObjectEncoder;
@@ -25,15 +27,17 @@ import icesi.plantapiloto.experimento.common.PluginI;
 public class ScheduleManager {
     // private PublisherI publisherI;
 
-    private final static String PATH = "data";
+    private final static String PATH = "../data";
     private final static String FILE_TEST = "XHGRIDClient.csv";
     private Properties properties;
     private Properties pluginList;
     private Queue<Experiment> experiments;
     private Queue<PluginI> pluginIs;
     private Scheduler scheduler;
+    private MessageManager messageManager;
     private File propFile;
     private boolean running;
+    private Experiment currentExperiment;
 
     public class Experiment {
         String experiment_name;
@@ -110,7 +114,6 @@ public class ScheduleManager {
             }
             line = br.readLine();
         }
-
         br.close();
 
         // String pubClass = properties.getProperty("publisher.class").trim();
@@ -133,7 +136,9 @@ public class ScheduleManager {
         // publisherI.setHost(pubIp);
         // publisherI.setName(pubName);
         // scheduler = new Scheduler(publisherI);
-        scheduler = new Scheduler(null,this);
+        messageManager=new MessageManager(this);
+        messageManager.start();
+        scheduler = new Scheduler(messageManager,this);
 
     }
 
@@ -253,6 +258,7 @@ public class ScheduleManager {
         
         Experiment exp = experiments.peek();
         // System.out.println("Runnign "+exp.experiment_name);
+        currentExperiment=exp;
         System.out.println(
                 "\nNAME: "+exp.experiment_name + 
                 "\nDURATION: "+exp.duration_second + 
@@ -285,35 +291,41 @@ public class ScheduleManager {
     public void setRunning(boolean run) {
         this.running = run;
     }
-    
-    public void addTags(Message message){
-        ArrayList<Tag> tags=new List<Tag>();
-        Tag tag=new Tag();
-        String nameServer="";
-        for (Measure measure : message.getMeasures()) {
-            tag.setName(measure.getName());
-            tag.setValue(measure.getValue());
-            nameServer = message.getDataSource().split()[0]
-            tag.setDataSource(nameServer)
-            tags.add(tag);
-        }
-        printcsv(tags);
-    }
-    public void printcsv (ArrayList<Tag> tags) throws IOException{
 
+    public void printcsv (ArrayList<Tag> tags) throws IOException{
         File file = new File(PATH + "/" + FILE_TEST);
+        if(!file.exists()){
+            file.createNewFile();
+        }
         FileWriter fw = new FileWriter(file, true); // abrir en modo de agregar
         BufferedWriter bw = new BufferedWriter(fw);
-
+        
+        // Verificar si la primera línea del archivo está vacía
+        boolean isFirstLineEmpty = (new BufferedReader(new FileReader(file)).readLine() == null);
          //Solo escribe la cabecera del archivo la primera vez que se llama a la función
-        if (file.length() == 0) {
+        if (isFirstLineEmpty) {
             bw.write("EXPERIMENT;TAG;VALUE;DATE;DURATION;REPEATS;TAGS AMMOUNT;LAPSE;SERVER AMMOUNT\n");
         }       
         for(int i= 0; i<tags.size();i++){
             Tag currentTag = tags.get(i);
-            bw.write(exp.experiment_name+ ";" +currentTag.getName()+ ";" +currentTag.getValue()+ ";"+currentTag.getTime()+
-            exp.duration_second+";"+exp.repeats+";"+exp.tag_ammount+";"+exp.lapse+";"+exp.server_ammount+"\n");                 	
+            int repetition=currentExperiment.repeats+1;
+            bw.write(currentExperiment.experiment_name+ ";" +currentTag.getName()+ ";" +currentTag.getValue()+ ";"+currentTag.getTime()+";"+
+            currentExperiment.duration_second+";"+repetition+";"+currentExperiment.tag_ammount+";"+currentExperiment.lapse+";"+currentExperiment.server_ammount+"\n");                 	
         }
         bw.close();
+    }
+
+    public void addTags(Message message) throws IOException{
+        ArrayList<Tag> tags=new ArrayList<Tag>();
+        String nameServer="";
+        for (Measure measure : message.getMeasures()) {
+            Tag tag=new Tag();
+            tag.setName(measure.getName());
+            tag.setValue(Integer.parseInt(measure.getValue()));
+            nameServer = message.getSourceData().split(" ")[0];
+            tag.setDataSource(nameServer);
+            tags.add(tag);
+        }
+        printcsv(tags);
     }
 }

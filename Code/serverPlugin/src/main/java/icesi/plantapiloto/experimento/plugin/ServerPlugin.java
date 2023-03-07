@@ -56,7 +56,7 @@ public class ServerPlugin implements PluginI {
             msg.setSourceData(name + " " + ip + ":" + port).setTime(Calendar.getInstance().getTime());
 
             // int size = Integer.parseInt(props.getProperty("TAG_AMMOUNT"));
-            int size = 5;
+            int size = 4;
 
             for (int i = 0; i < size; i++) {
                 String tag = "TAG_#" + i;
@@ -73,14 +73,14 @@ public class ServerPlugin implements PluginI {
                 tags.add(tag);
                 String value = reader.readLine();
                 Measure measure = new Measure();
-                measure.setName(tag);
-                measure.setValue(value);
+                measure.setName(tag);  
+                measure.setValue(value.trim());
                 msg.addMeasure(measure);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         timer.cancel();
         this.running = false;
         return msg;

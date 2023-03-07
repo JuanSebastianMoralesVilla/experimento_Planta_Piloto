@@ -27,13 +27,14 @@ public class MessageManager extends Thread {
                          while (!messages.isEmpty()) {
                             // Guarda el mensaje en algún medio de almacenamiento, como una base de datos o un archivo.
                             Message message = messages.poll();
-                            scheduleManager.addTag(message);
+                            scheduleManager.addTags(message);
                          }
                     } else {
                         Thread.yield();
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 System.out.println("ERROR AL GUARDAR");
             }
         }
