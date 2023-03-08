@@ -11,61 +11,32 @@ import icesi.plantapiloto.experimento.common.entities.Measure;
 import icesi.plantapiloto.experimento.common.entities.Tag;
 import java.util.ArrayList;
 
-public class MessageManager extends Thread {
+public class MessageManager{
     private final static String PATH = "../data";
     private final static String FILE_TEST = "XHGRIDClient.csv";
-    private ArrayDeque<Message> messages;
     private boolean stop;
 
 
     public MessageManager() {
-        messages = new ArrayDeque<>();
-    }
-    
-    public void addMessage(Message message) {
-        synchronized (messages) {
-            messages.add(message);
-        }
     }
 
-    public void run() {
-        while (!stop) {
-            try {
-                synchronized (messages) {
-                    if (!messages.isEmpty()) {
-                         while (!messages.isEmpty()) {
-                            // Guarda el mensaje en algún medio de almacenamiento, como una base de datos o un archivo.
-                            Message message = messages.poll();
-                            addTags(message);
-                         }
-                    } else {
-                        Thread.yield();
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("ERROR AL GUARDAR");
+    public synchronized void addTags(Message message) throws IOException{
+        if(message==null){
+            System.out.println("La escritura en el csv termino exitosamente.");
+        }else{
+            ArrayList<Tag> tags=new ArrayList<Tag>();
+            String nameServer="";
+            for (Measure measure : message.getMeasures()) {
+                Tag tag=new Tag();
+                tag.setName(measure.getName());
+                tag.setValue(Integer.parseInt(measure.getValue()));
+                tag.setTime(measure.getRequestTime());
+                tag.setDataSource(message.getSourceData());
+                tags.add(tag);
             }
+            printcsv(tags,message);
         }
-    }
-
-    public void stopTask(boolean c) {
-        stop = c;
-    }
-
-    public void addTags(Message message) throws IOException{
-        ArrayList<Tag> tags=new ArrayList<Tag>();
-        String nameServer="";
-        for (Measure measure : message.getMeasures()) {
-            Tag tag=new Tag();
-            tag.setName(measure.getName());
-            tag.setValue(Integer.parseInt(measure.getValue()));
-            tag.setTime(measure.getRequestTime());
-            nameServer = message.getSourceData().split(" ")[0];
-            tag.setDataSource(nameServer);
-            tags.add(tag);
-        }
-        printcsv(tags,message);
+        
     }
 
     public void printcsv (ArrayList<Tag> tags,Message message) throws IOException{

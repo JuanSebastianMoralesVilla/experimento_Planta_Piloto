@@ -100,7 +100,6 @@ public class ScheduleManager {
         br.close();
         
         messageManager=new MessageManager();
-        messageManager.start();
         scheduler = new Scheduler(messageManager,this);
 
     }
@@ -265,6 +264,6 @@ public class ScheduleManager {
 
     public void stop(){
         this.running = false;
-        this.messageManager.stopTask(true);
+        //this.messageManager.stopTask(true);
     }
 }

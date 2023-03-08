@@ -1,7 +1,7 @@
 package icesi.plantapiloto.experimento.client_manager;
 
 import java.util.TimerTask;
-
+import java.io.IOException;
 import icesi.plantapiloto.experimento.common.PluginI;
 import icesi.plantapiloto.experimento.common.entities.Message;
 import icesi.plantapiloto.experimento.common.entities.Experiment;
@@ -24,8 +24,11 @@ public class Task extends TimerTask {
         messages.setExperiment(experiment);
         Runnable addMessageRunnable = new Runnable() {
             public void run() {
-                // Llamar al método addMessage() del MessageManager
-                messageManager.addMessage(messages);
+                try {
+                    messageManager.addTags(messages);
+                } catch (IOException e) {
+                     e.printStackTrace();
+                }
             }
         };
         Thread thread = new Thread(addMessageRunnable);

@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Timestamp;
 
+
 import icesi.plantapiloto.experimento.common.encoders.JsonEncoder;
 import icesi.plantapiloto.experimento.common.entities.Measure;
 import icesi.plantapiloto.experimento.common.entities.Tag;
@@ -21,6 +22,7 @@ public class ServerSocketListener extends Thread{
 
     public ServerSocketListener(int port, Server server) throws IOException {
         this.server = server;
+        this.server.setPort(String.valueOf(port));
         encoder = new JsonEncoder();
         listener = new ServerSocket(port);
         System.out.println("Listening in Port: "+port);
