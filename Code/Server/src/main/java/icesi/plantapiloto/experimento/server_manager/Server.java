@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,14 +16,15 @@ import icesi.plantapiloto.experimento.common.entities.Tag;
 
 public class Server {
 
-	private final static String PATH = "data";
-	private final static String FILE_TEST = "XHGRID.csv";
-
 	private Stack<Tag> stack;
 	private Random randomGenerator;
 	private int seed;
 	private int frequency;
 	private Stack<Tag>  tagsSend;
+	private String serverIp;
+	private String serverName;
+	private String serverPort;
+	private TagManager tagManager;
 	
 	public Server() {
 		stack = new Stack<>();
@@ -35,6 +37,7 @@ public class Server {
 		Server server = new Server();
         SocketServerRunnable runnableServer = new SocketServerRunnable(server);
         GenerateNumbers generateNumbers = new GenerateNumbers(server);
+		server.tagManager = new TagManager(server);
         generateNumbers.start();
         runnableServer.start();
 	}
@@ -58,6 +61,12 @@ public class Server {
 					String frequencyString = prop[1];
 					this.frequency=Integer.parseInt(frequencyString);
 				}
+				else if (prop[0].contains("NAME_SERVER")){
+					this.serverName = prop[1];
+				}
+				else if (prop[0].contains("IP_SERVER")){
+					this.serverIp = prop[1];
+				}
 				line = red.readLine();
 			}
 			red.close();
@@ -72,6 +81,17 @@ public class Server {
 		Tag tag = new Tag();
 		tag.setValue(number);
 		tag.setTime(timestamp);
+		Runnable addMessageRunnable = new Runnable() {
+            public void run() {
+                try {
+                   tagManager.printcsv(tag);
+                } catch (IOException e) {
+                     e.printStackTrace();
+                }
+            }
+        };
+        Thread thread = new Thread(addMessageRunnable);
+        thread.start();
 		stack.push(tag);
 	}
 	
@@ -83,26 +103,22 @@ public class Server {
 		return this.frequency;
 	}
 
-	public void printcsv()throws IOException{
-
-		File file= new File(PATH+"/"+FILE_TEST);
-        FileWriter fw= new FileWriter(file);
-        BufferedWriter bw= new BufferedWriter(fw);
-		
-		bw.write("TAG;VALUE;DATE\n");
-
-		for(int i= 0; i<tagsSend.size();i++){
-
-
-			Tag currentTag = tagsSend.pop();			
-		
-
-			bw.write( currentTag.getName()+ ";" +currentTag.getValue()+ ";"+currentTag.getTime()+"\n");                 	
-			}
-		bw.close();
-    }
-
 	public Stack<Tag> getTagSend(){
-		return tagsSend;
+		return this.tagsSend;
+	}
+
+	public String getServerName(){
+		return this.serverName;
+	}
+
+	public String getServerIp(){
+		return this.serverIp;
+	}
+
+	public String getServerPort(){
+		return this.serverPort;
+	}
+	public void setPort(String port){
+		this.serverPort=port;
 	}
 }

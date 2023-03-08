@@ -125,7 +125,6 @@ public class ScheduleManager {
         // publisherI.setName(pubName);
         // scheduler = new Scheduler(publisherI);
         messageManager=new MessageManager();
-        messageManager.start();
         scheduler = new Scheduler(messageManager,this);
 
     }
