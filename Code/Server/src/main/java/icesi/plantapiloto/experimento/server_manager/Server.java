@@ -24,6 +24,9 @@ public class Server {
 	private int frequency;
 	private Stack<Tag>  tagsSend;
 	
+	SocketServerRunnable runnableServer;
+	GenerateNumbers generateNumbers;
+	
 	public Server() {
 		stack = new Stack<>();
 		tagsSend= new Stack<>();
@@ -33,10 +36,7 @@ public class Server {
 
 	public static void main(String[] args) throws IOException{
 		Server server = new Server();
-        SocketServerRunnable runnableServer = new SocketServerRunnable(server);
-        GenerateNumbers generateNumbers = new GenerateNumbers(server);
-        generateNumbers.start();
-        runnableServer.start();
+        server.start();
 	}
 
 	private void loadConfig() {
@@ -101,6 +101,17 @@ public class Server {
 			}
 		bw.close();
     }
+
+	public void stop(){
+		this.generateNumbers.stopGenerationNumbers();
+	}
+
+	public void start() throws IOException{
+		runnableServer = new SocketServerRunnable(this);
+		generateNumbers = new GenerateNumbers(this);
+        generateNumbers.start();
+        runnableServer.start();
+	}
 
 	public Stack<Tag> getTagSend(){
 		return tagsSend;

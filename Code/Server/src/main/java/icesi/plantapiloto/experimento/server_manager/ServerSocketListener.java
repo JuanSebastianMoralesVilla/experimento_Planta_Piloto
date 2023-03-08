@@ -14,7 +14,6 @@ import icesi.plantapiloto.experimento.common.entities.Tag;
 
 public class ServerSocketListener extends Thread{
     private Server server;
-    private boolean running;
     ServerSocket listener;
     BufferedReader reader;
     PrintWriter writer;
@@ -22,7 +21,6 @@ public class ServerSocketListener extends Thread{
 
     public ServerSocketListener(int port, Server server) throws IOException {
         this.server = server;
-        running = false;
         encoder = new JsonEncoder();
         listener = new ServerSocket(port);
         System.out.println("Listening in Port: "+port);
@@ -30,20 +28,17 @@ public class ServerSocketListener extends Thread{
 
     private String processRequest() throws IOException {
         // Leer el tag enviado por el cliente
-        System.out.println("Type input");
-        String request = reader.readLine();
-        System.out.println("Input: " + request);
-        if(request.equalsIgnoreCase("close") || request.isEmpty()){
-            return null;
+        String request = reader.readLine().trim();
+        if(request.equalsIgnoreCase("close") || request.equalsIgnoreCase("off")){
+            return request.trim().toLowerCase();
         }
-        Measure measure = new Measure();
 
-        
+        Measure measure = new Measure();
         Timestamp time = new Timestamp(System.currentTimeMillis());
         measure.setRequestTime(time);
         Tag value = server.getLastNumber();
         measure.setValue(value.getValue()+"");
-        measure.setName(request.trim());
+        measure.setName(request);
         
         server.getTagSend().add(value);
         String result = encoder.encode(measure);
@@ -54,32 +49,33 @@ public class ServerSocketListener extends Thread{
 
     @Override
     public void run() {
-        this.running = true;
-        Socket socket;
+        Socket socket = null;
+        boolean running = true;
         try {
+            while(running){
+                socket = listener.accept();
+                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                writer = new PrintWriter(socket.getOutputStream(), true);
 
-            socket = listener.accept();
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            writer = new PrintWriter(socket.getOutputStream(), true);
-
-            boolean runningCurrentSocket = true;
-            while (runningCurrentSocket) {
-                String response = processRequest();
-                if (response == null) {
-                    runningCurrentSocket = false;
-                } else {
-                    writer.println(response);
+                boolean runningCurrentSocket = true;
+                while (runningCurrentSocket) {
+                    String response = processRequest();
+                    if (response.equals("close")) {
+                        runningCurrentSocket = false;
+                    } else if (response.equals("off")){
+                        runningCurrentSocket = false;
+                        running = false;
+                    } else {
+                        writer.println(response);
+                    }
                 }
             }
-            System.out.println("Closing with current");
+            
+            System.out.println("Turning off");
             socket.close();
             listener.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void stopProcess() {
-        this.running = false;
     }
 }

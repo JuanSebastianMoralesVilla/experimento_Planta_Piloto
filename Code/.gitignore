@@ -6,3 +6,6 @@ build
 
 # Ignore IDE Files
 .vscode
+
+# Jar files
+jars/*

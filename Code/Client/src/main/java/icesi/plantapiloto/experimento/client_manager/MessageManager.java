@@ -40,7 +40,7 @@ public class MessageManager extends Thread {
         }
     }
 
-     public void stopTask(boolean c) {
+    public void stopTask(boolean c) {
         stop = c;
     }
 

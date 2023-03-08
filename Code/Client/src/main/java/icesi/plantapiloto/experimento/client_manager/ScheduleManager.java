@@ -14,17 +14,12 @@ import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.ArrayList;
-import java.util.List;
 import icesi.plantapiloto.experimento.common.entities.Message;
 import icesi.plantapiloto.experimento.common.entities.Measure;
 import icesi.plantapiloto.experimento.common.entities.Tag;
 import icesi.plantapiloto.experimento.common.PluginI;
 
-// import icesi.plantapiloto.experimento.common.encoders.ObjectEncoder;
-// import icesi.plantapiloto.experimento.common.events.PublisherI;
-
 public class ScheduleManager {
-    // private PublisherI publisherI;
 
     private final static String PATH = "../data";
     private final static String FILE_TEST = "XHGRIDClient.csv";
@@ -113,27 +108,7 @@ public class ScheduleManager {
             line = br.readLine();
         }
         br.close();
-
-        // String pubClass = properties.getProperty("publisher.class").trim();
-        // String pubIp = properties.getProperty("publisher.ip").trim();
-        // String pubEncoder = properties.getProperty("publisher.encoder").trim();
-        // String pubName = properties.getProperty("publisher.name").trim();
-
-        // if (pubClass == null || pubIp == null || pubEncoder == null || pubName ==
-        // null) {
-        // System.out.println("No publisher config");
-        // return;
-        // }
-        // ObjectEncoder encoder = (ObjectEncoder)
-        // Class.forName(pubEncoder).getDeclaredConstructor()
-        // .newInstance();
-        // publisherI = (PublisherI)
-        // Class.forName(pubClass).getDeclaredConstructor().newInstance();
-
-        // publisherI.setEncoder(encoder);
-        // publisherI.setHost(pubIp);
-        // publisherI.setName(pubName);
-        // scheduler = new Scheduler(publisherI);
+        stream.close();
         messageManager=new MessageManager(this);
         messageManager.start();
         scheduler = new Scheduler(messageManager,this);
@@ -167,12 +142,10 @@ public class ScheduleManager {
             int input = Integer.parseInt(line);
             switch (input) {
                 case 0:
-                    manager.setRunning(false);
+                    manager.stop();
                     break;
                 case 1:
-                    manager.setRunning(true);
-                    manager.runNextExperiment();
-
+                    manager.start();
             }
         } catch (NumberFormatException e) {
             System.out.println("Bad input, please try again, remember just type the number");
@@ -252,7 +225,7 @@ public class ScheduleManager {
         if(experiments.isEmpty()){
             System.out.println("Finished");
             this.running = false;
-            desconectPluings();
+            turnOffPlugins();
             return;
         }
         
@@ -267,14 +240,13 @@ public class ScheduleManager {
                 "\nLAPSE: "+exp.lapse+
                 "\nSERVER AMMOUNT: "+exp.server_ammount);
                 
-        clearPluings();
+        desconectPluings();
         loadPlugins(exp);
         
         if(exp.repeats == 1){
             experiments.remove();
         }
 
-       
         scheduler.runTasks(exp.lapse, exp.duration_second, exp.server_ammount,exp.experiment_name);
         exp.repeats--;
     }
@@ -285,16 +257,24 @@ public class ScheduleManager {
         }
     }
 
-    public void clearPluings(){
-        pluginIs = new LinkedList<>();
+    public void turnOffPlugins() throws IOException{
+        while(!pluginIs.isEmpty()){
+            pluginIs.poll().turnOff();
+        }
     }
 
     public boolean isRunning() {
         return this.running;
     }
 
-    public void setRunning(boolean run) {
-        this.running = run;
+    public void start() throws Exception{
+        this.running = true;
+        runNextExperiment();
+    }
+
+    public void stop(){
+        this.running = false;
+        this.messageManager.stopTask(true);
     }
 
     public void printcsv (ArrayList<Tag> tags) throws IOException{
@@ -307,6 +287,7 @@ public class ScheduleManager {
         
         // Verificar si la primera línea del archivo está vacía
         boolean isFirstLineEmpty = (new BufferedReader(new FileReader(file)).readLine() == null);
+    
          //Solo escribe la cabecera del archivo la primera vez que se llama a la función
         if (isFirstLineEmpty) {
             bw.write("EXPERIMENT;TAG;VALUE;DATE;DURATION;REPEATS;TAGS AMMOUNT;LAPSE;SERVER AMMOUNT\n");

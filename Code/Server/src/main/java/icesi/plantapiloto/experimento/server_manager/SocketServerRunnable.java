@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 public class SocketServerRunnable extends Thread {
@@ -40,10 +41,19 @@ public class SocketServerRunnable extends Thread {
             e.printStackTrace();
         }
         pool.shutdown();
+        try {
+            pool.awaitTermination(24, TimeUnit.HOURS);
+            server.stop();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
     }
 
     public void stopProcess() {
         this.pool.shutdownNow();
+        server.stop();
         this.interrupt();
     }
 }
