@@ -1,29 +1,29 @@
 #!/bin/bash
 
 copy_files(){
-    mkdir -p jars/client/resources
-    mkdir -p jars/server/resources
-    mkdir -p jars/data
+    mkdir -p Experiment/client/resources
+    mkdir -p Experiment/server/resources
+    mkdir -p Experiment/data
     ###########################################################
 
-    cp serverPlugin/build/libs/serverPlugin.jar jars/client
-    cp Client/build/libs/Client.jar jars/client
+    cp serverPlugin/build/libs/serverPlugin.jar Experiment/client
+    cp Client/build/libs/Client.jar Experiment/client
 
-    cp Client/src/main/resources/* jars/client/resources
+    cp Client/src/main/resources/* Experiment/client/resources
     ###########################################################
-    cp common/build/libs/common.jar jars/client
-    cp common/build/libs/controlLayerCommon.jar jars/client
+    cp common/build/libs/common.jar Experiment/client
+    cp common/build/libs/controlLayerCommon.jar Experiment/client
     ###########################################################
-    cp Server/build/libs/Server.jar jars/server
+    cp Server/build/libs/Server.jar Experiment/server
 
-    cp Server/src/main/resources/* jars/server/resources
+    cp Server/src/main/resources/* Experiment/server/resources
 
-    cp common/build/libs/common.jar jars/client
-    cp common/build/libs/controlLayerCommon.jar jars/server
+    cp common/build/libs/common.jar Experiment/client
+    cp common/build/libs/controlLayerCommon.jar Experiment/server
 }
 
 run_app(){
-    cd jars/server
+    cd Experiment/server
     java -cp "./*" icesi.plantapiloto.experimento.server_manager.Server
 }
 

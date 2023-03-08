@@ -18,7 +18,7 @@ public class Task extends TimerTask {
     }
     @Override
     public void run() {
-        long time = System.currentTimeMillis();
+        // long time = System.currentTimeMillis();
         //Se almacenan las respuestas
         Message  messages = plugin.getMessage();
         messages.setExperiment(experiment);

@@ -1,5 +1,4 @@
 package icesi.plantapiloto.experimento.client_manager;
-import java.util.ArrayDeque;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,8 +13,6 @@ import java.util.ArrayList;
 public class MessageManager{
     private final static String PATH = "../data";
     private final static String FILE_TEST = "XHGRIDClient.csv";
-    private boolean stop;
-
 
     public MessageManager() {
     }
@@ -25,7 +22,6 @@ public class MessageManager{
             System.out.println("La escritura en el csv termino exitosamente.");
         }else{
             ArrayList<Tag> tags=new ArrayList<Tag>();
-            String nameServer="";
             for (Measure measure : message.getMeasures()) {
                 Tag tag=new Tag();
                 tag.setName(measure.getName());

@@ -13,11 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;
-import java.util.ArrayList;
-import icesi.plantapiloto.experimento.common.entities.Message;
-import icesi.plantapiloto.experimento.common.entities.Measure;
 import icesi.plantapiloto.experimento.common.entities.Experiment;
-import icesi.plantapiloto.experimento.common.entities.Tag;
 import icesi.plantapiloto.experimento.common.PluginI;
 
 public class ScheduleManager {
@@ -117,7 +113,7 @@ public class ScheduleManager {
             }
         }while (manager.isRunning() );
         rd.close();
-        System.out.println("SALIO xd");
+        System.out.println("Bye Bye UwU");
     }
 
     private static void showMenu() {
@@ -216,6 +212,8 @@ public class ScheduleManager {
             System.out.println("Finished");
             this.running = false;
             turnOffPlugins();
+            this.messageManager.addTags(null);
+            showMenu();
             return;
         }
         
@@ -236,7 +234,6 @@ public class ScheduleManager {
             experiments.remove();
         }
 
-       
         scheduler.runTasks(exp.getLapse(),exp.getDurationSecond(),exp.getServerAmount(),exp.getExperimentName(),exp);
         exp.setRepeats(exp.getRepeats()-1);
     }

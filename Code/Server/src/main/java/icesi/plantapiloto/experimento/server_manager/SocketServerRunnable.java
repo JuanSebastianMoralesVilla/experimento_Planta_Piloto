@@ -44,14 +44,14 @@ public class SocketServerRunnable extends Thread {
         try {
             pool.awaitTermination(24, TimeUnit.HOURS);
             server.stop();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
     }
 
-    public void stopProcess() {
+    public void stopProcess() throws IOException {
         this.pool.shutdownNow();
         server.stop();
         this.interrupt();

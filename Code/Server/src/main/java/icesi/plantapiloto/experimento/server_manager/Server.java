@@ -3,9 +3,6 @@ package icesi.plantapiloto.experimento.server_manager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,7 +20,6 @@ public class Server {
 	private Stack<Tag>  tagsSend;
 	private String serverIp;
 	private String serverName;
-	private String serverPort;
 	private TagManager tagManager;
 	
 	SocketServerRunnable runnableServer;
@@ -114,20 +110,15 @@ public class Server {
 		return this.serverIp;
 	}
 
-	public String getServerPort(){
-		return this.serverPort;
-	}
-	public void setPort(String port){
-		this.serverPort=port;
-	}
-	public void stop(){
+	public void stop() throws IOException{
 		this.generateNumbers.stopGenerationNumbers();
+		this.tagManager.printcsv(null);
 	}
 
 	public void start() throws IOException{
 		runnableServer = new SocketServerRunnable(this);
 		generateNumbers = new GenerateNumbers(this);
-		this.tagManager = new TagManager(this);
+		this.tagManager = new TagManager();
         generateNumbers.start();
         runnableServer.start();
 	}
