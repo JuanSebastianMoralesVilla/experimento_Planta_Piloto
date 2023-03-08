@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.net.SocketTimeoutException;
 
 import java.net.Socket;
 
@@ -97,39 +96,28 @@ public class ServerPlugin implements PluginI {
     public void connect() throws IOException{
         // System.out.println("Conectando con "+ip+":"+port);
         socket = new Socket(ip, port);
-        OutputStream output = socket.getOutputStream();
-        writer = new PrintWriter(output, true);
         InputStream input = socket.getInputStream();
+        OutputStream output = socket.getOutputStream();
+        
+        writer = new PrintWriter(output, true);
         reader = new BufferedReader(new InputStreamReader(input));
         // System.out.println(ip + ":" + port+" connected");
     }
 
     @Override
     public void disconnet() throws IOException {
-        System.out.println("Desconectando server: "+port);
         writer.println("close");
         reader.close();
         writer.close();
         socket.close();
     }
 
-    // @Override
-    // public Properties getSettings() {
-    //     return props;
-    // }
-
-    // @Override
-    // public void setSettings(Properties props) {
-    //     this.props = props;
-    // }
-
-    // @Override
-    // public void addSettings(Properties props) {
-    //     Iterator<?> keys = props.keySet().iterator();
-
-    //     while (keys.hasNext()) {
-    //         String key = (String) keys.next();
-    //         this.props.setProperty(key, props.getProperty(key));
-    //     }
-    // }
+    @Override
+    public void turnOff() throws IOException {
+        System.out.println("Apagando el server: "+port);
+        writer.println("off");
+        reader.close();
+        writer.close();
+        socket.close();
+    }
 }

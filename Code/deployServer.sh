@@ -1,7 +1,10 @@
 #!/bin/bash
 
 copy_files(){
+    mkdir -p jars/client/resources
     mkdir -p jars/server/resources
+    mkdir -p jars/data
+    ###########################################################
 
     cp serverPlugin/build/libs/serverPlugin.jar jars/client
     cp Client/build/libs/Client.jar jars/client

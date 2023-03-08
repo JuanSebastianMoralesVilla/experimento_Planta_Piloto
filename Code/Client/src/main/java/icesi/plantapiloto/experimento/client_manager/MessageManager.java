@@ -3,17 +3,12 @@ import java.util.ArrayDeque;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import icesi.plantapiloto.experimento.common.entities.Message;
 import icesi.plantapiloto.experimento.common.entities.Measure;
-import icesi.plantapiloto.experimento.common.entities.Experiment;
 import icesi.plantapiloto.experimento.common.entities.Tag;
-import icesi.plantapiloto.experimento.common.events.PublisherI;
 import java.util.ArrayList;
 
 public class MessageManager{
@@ -51,9 +46,9 @@ public class MessageManager{
         }
         FileWriter fw = new FileWriter(file, true); // abrir en modo de agregar
         BufferedWriter bw = new BufferedWriter(fw);
-        
+        BufferedReader br = new BufferedReader(new FileReader(file));
         // Verificar si la primera línea del archivo está vacía
-        boolean isFirstLineEmpty = (new BufferedReader(new FileReader(file)).readLine() == null);
+        boolean isFirstLineEmpty = (br.readLine() == null);
          //Solo escribe la cabecera del archivo la primera vez que se llama a la función
         if (isFirstLineEmpty) {
             bw.write("EXPERIMENT NUMBER;SERVER;TAG;VALUE;DATE;DURATION;REPEATS;TAGS AMMOUNT;LAPSE;SERVER AMMOUNT\n");
@@ -66,5 +61,6 @@ public class MessageManager{
             message.getExperiment().getLapse()+";"+message.getExperiment().getServerAmount()+"\n");                 	
         }
         bw.close();
+        br.close();
     }
 }

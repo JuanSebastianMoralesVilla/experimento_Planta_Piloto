@@ -14,18 +14,13 @@ import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.ArrayList;
-import java.util.List;
 import icesi.plantapiloto.experimento.common.entities.Message;
 import icesi.plantapiloto.experimento.common.entities.Measure;
 import icesi.plantapiloto.experimento.common.entities.Experiment;
 import icesi.plantapiloto.experimento.common.entities.Tag;
 import icesi.plantapiloto.experimento.common.PluginI;
 
-// import icesi.plantapiloto.experimento.common.encoders.ObjectEncoder;
-// import icesi.plantapiloto.experimento.common.events.PublisherI;
-
 public class ScheduleManager {
-    // private PublisherI publisherI;
 
     private Properties properties;
     private Properties pluginList;
@@ -103,27 +98,7 @@ public class ScheduleManager {
             line = br.readLine();
         }
         br.close();
-
-        // String pubClass = properties.getProperty("publisher.class").trim();
-        // String pubIp = properties.getProperty("publisher.ip").trim();
-        // String pubEncoder = properties.getProperty("publisher.encoder").trim();
-        // String pubName = properties.getProperty("publisher.name").trim();
-
-        // if (pubClass == null || pubIp == null || pubEncoder == null || pubName ==
-        // null) {
-        // System.out.println("No publisher config");
-        // return;
-        // }
-        // ObjectEncoder encoder = (ObjectEncoder)
-        // Class.forName(pubEncoder).getDeclaredConstructor()
-        // .newInstance();
-        // publisherI = (PublisherI)
-        // Class.forName(pubClass).getDeclaredConstructor().newInstance();
-
-        // publisherI.setEncoder(encoder);
-        // publisherI.setHost(pubIp);
-        // publisherI.setName(pubName);
-        // scheduler = new Scheduler(publisherI);
+        
         messageManager=new MessageManager();
         scheduler = new Scheduler(messageManager,this);
 
@@ -141,6 +116,7 @@ public class ScheduleManager {
                 executeMenu(manager, line);
             }
         }while (manager.isRunning() );
+        rd.close();
         System.out.println("SALIO xd");
     }
 
@@ -156,12 +132,10 @@ public class ScheduleManager {
             int input = Integer.parseInt(line);
             switch (input) {
                 case 0:
-                    manager.setRunning(false);
+                    manager.stop();
                     break;
                 case 1:
-                    manager.setRunning(true);
-                    manager.runNextExperiment();
-
+                    manager.start();
             }
         } catch (NumberFormatException e) {
             System.out.println("Bad input, please try again, remember just type the number");
@@ -241,7 +215,7 @@ public class ScheduleManager {
         if(experiments.isEmpty()){
             System.out.println("Finished");
             this.running = false;
-            desconectPluings();
+            turnOffPlugins();
             return;
         }
         
@@ -255,7 +229,7 @@ public class ScheduleManager {
                 "\nLAPSE: "+exp.getLapse()+
                 "\nSERVER AMMOUNT: "+exp.getServerAmount());
                 
-        clearPluings();
+        desconectPluings();
         loadPlugins(exp);
         
         if(exp.getRepeats() == 1){
@@ -273,18 +247,23 @@ public class ScheduleManager {
         }
     }
 
-    public void clearPluings(){
-        pluginIs = new LinkedList<>();
+    public void turnOffPlugins() throws IOException{
+        while(!pluginIs.isEmpty()){
+            pluginIs.poll().turnOff();
+        }
     }
 
     public boolean isRunning() {
         return this.running;
     }
 
-    public void setRunning(boolean run) {
-        this.running = run;
+    public void start() throws Exception{
+        this.running = true;
+        runNextExperiment();
     }
 
-
-
+    public void stop(){
+        this.running = false;
+        //this.messageManager.stopTask(true);
+    }
 }

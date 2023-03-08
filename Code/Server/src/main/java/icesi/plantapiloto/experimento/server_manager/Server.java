@@ -26,6 +26,9 @@ public class Server {
 	private String serverPort;
 	private TagManager tagManager;
 	
+	SocketServerRunnable runnableServer;
+	GenerateNumbers generateNumbers;
+	
 	public Server() {
 		stack = new Stack<>();
 		tagsSend= new Stack<>();
@@ -35,11 +38,7 @@ public class Server {
 
 	public static void main(String[] args) throws IOException{
 		Server server = new Server();
-        SocketServerRunnable runnableServer = new SocketServerRunnable(server);
-        GenerateNumbers generateNumbers = new GenerateNumbers(server);
-		server.tagManager = new TagManager(server);
-        generateNumbers.start();
-        runnableServer.start();
+        server.start();
 	}
 
 	private void loadConfig() {
@@ -120,5 +119,16 @@ public class Server {
 	}
 	public void setPort(String port){
 		this.serverPort=port;
+	}
+	public void stop(){
+		this.generateNumbers.stopGenerationNumbers();
+	}
+
+	public void start() throws IOException{
+		runnableServer = new SocketServerRunnable(this);
+		generateNumbers = new GenerateNumbers(this);
+		this.tagManager = new TagManager(this);
+        generateNumbers.start();
+        runnableServer.start();
 	}
 }
