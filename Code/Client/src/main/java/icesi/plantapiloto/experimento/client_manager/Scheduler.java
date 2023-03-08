@@ -1,7 +1,7 @@
 package icesi.plantapiloto.experimento.client_manager;
 
 import icesi.plantapiloto.experimento.common.PluginI;
-
+import icesi.plantapiloto.experimento.common.entities.Experiment;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,13 +27,14 @@ public class Scheduler {
 
     public void addPlugin(PluginI pugI) {
         plugins.add(pugI);
+
     }
 
-    public void runTasks(long lapse, long duration,int server_ammount,String testId){
+    public void runTasks(long lapse, long duration,int server_ammount,String testId, Experiment exp){
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(plugins.size()*5);
         // Timer timer = new Timer();
         for(int i = 0;i<plugins.size()&&i<server_ammount;i++){
-            Task task = new Task(plugins.get(i), messageManager);
+            Task task = new Task(plugins.get(i), messageManager,exp);
             executorService.scheduleWithFixedDelay(task,0,lapse,TimeUnit.MILLISECONDS);
             // timer.schedule(task, 0,lapse);
         }

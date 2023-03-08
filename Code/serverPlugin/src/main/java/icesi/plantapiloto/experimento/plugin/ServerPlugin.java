@@ -65,7 +65,6 @@ public class ServerPlugin implements PluginI {
                 String tag = "TAG_#" + i;
                 tags.add(tag);
                 String value = reader.readLine();
-
                 Measure measure = encoder.decode(value, Measure.class);
                 msg.addMeasure(measure);
             }

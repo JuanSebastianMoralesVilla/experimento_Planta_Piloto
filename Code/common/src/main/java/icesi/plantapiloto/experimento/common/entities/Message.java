@@ -1,6 +1,6 @@
 package icesi.plantapiloto.experimento.common.entities;
-
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +16,8 @@ public class Message implements Serializable {
     private List<Measure> measures;
 
     private String topic;
+
+    private Experiment experiment;
 
     public Message() {
         measures = new ArrayList<>();
@@ -100,6 +102,16 @@ public class Message implements Serializable {
 
     public void addMeasure(Measure measure) {
         this.measures.add(measure);
+    }
+    /**
+     * @return the experiment
+     */
+     public Experiment getExperiment() {
+        return this.experiment;
+    }
+
+    public void setExperiment(Experiment experiment) {
+        this.experiment = experiment;
     }
 
 }
