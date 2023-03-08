@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class MessageManager{
     private final static String PATH = "../data";
-    private final static String FILE_TEST = "XHGRIDClient.csv";
+    private String FILE_TEST = "XHGRIDClient";
 
     public MessageManager() {
     }
@@ -36,7 +36,7 @@ public class MessageManager{
     }
 
     public void printcsv (ArrayList<Tag> tags,Message message) throws IOException{
-        File file = new File(PATH + "/" + FILE_TEST);
+        File file = new File(PATH + "/" + FILE_TEST+ "_"+message.getExperiment().getExperimentName()+".csv");
         if(!file.exists()){
             file.createNewFile();
         }
