@@ -117,6 +117,7 @@ public class ScheduleManager {
                 executeMenu(manager, line);
             }
         }while (manager.isRunning() );
+        rd.close();
         System.out.println("SALIO xd");
     }
 
